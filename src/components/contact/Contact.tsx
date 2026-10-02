@@ -22,10 +22,7 @@ export function Contact() {
     }
   }
 
-  const links = [
-    ...socialLinks.filter((l) => l.icon !== 'mail'),
-    ...(profile.showPhone ? [{ label: profile.phone, href: `tel:${profile.phone}`, icon: 'phone' as const }] : []),
-  ]
+  const links = socialLinks.filter((l) => l.icon !== 'mail')
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="relative py-20 md:py-28">

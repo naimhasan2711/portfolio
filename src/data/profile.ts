@@ -14,13 +14,6 @@ export const profile = {
   location: 'Dhaka, Bangladesh',
   email: 'nakibhasan2711@gmail.com',
 
-  /**
-   * Your phone number is in the CV, but publishing it on a public website
-   * invites spam calls. Set `showPhone` to true if you want it displayed.
-   */
-  phone: '+8801775111233',
-  showPhone: false,
-
   /** Shown under your name in the hero. */
   specialties: ['Software Engineering', 'Kotlin', 'Jetpack Compose', 'Clean Architecture'],
 
