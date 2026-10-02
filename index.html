@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!--
+      SEO — keep in sync with src/data/profile.ts.
+      TODO: replace https://nakibulhassan.dev with your real domain once deployed.
+    -->
+    <title>MD Nakibul Hassan — Senior Software Engineer</title>
+    <meta
+      name="description"
+      content="MD Nakibul Hassan is a Senior Software Engineer in Dhaka with 5+ years building scalable, high-performance software — specialising in mobile (Android) with Kotlin, Java, Jetpack Compose and Clean Architecture."
+    />
+    <meta name="author" content="MD Nakibul Hassan" />
+    <meta name="theme-color" content="#0b1117" />
+    <meta name="color-scheme" content="dark light" />
+    <!-- Apply the saved theme before first paint (prevents a flash). Default: dark. -->
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
+    <link rel="canonical" href="https://nakibulhassan.dev/" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="MD Nakibul Hassan — Senior Software Engineer" />
+    <meta
+      property="og:description"
+      content="Senior Software Engineer with 5+ years building scalable, high-performance software. Software architecture, API integration and mobile engineering."
+    />
+    <meta property="og:url" content="https://nakibulhassan.dev/" />
+    <meta property="og:image" content="https://nakibulhassan.dev/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="profile:first_name" content="Nakibul" />
+    <meta property="profile:last_name" content="Hassan" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MD Nakibul Hassan — Senior Software Engineer" />
+    <meta
+      name="twitter:description"
+      content="Senior Software Engineer with 5+ years building scalable, high-performance software. Software architecture, API integration and mobile engineering."
+    />
+    <meta name="twitter:image" content="https://nakibulhassan.dev/og-image.png" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "MD Nakibul Hassan",
+        "jobTitle": "Senior Software Engineer",
+        "worksFor": { "@type": "Organization", "name": "BJIT Limited" },
+        "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressCountry": "BD" },
+        "email": "mailto:nakibhasan2711@gmail.com",
+        "url": "https://nakibulhassan.dev/",
+        "image": "https://nakibulhassan.dev/portrait.webp",
+        "sameAs": ["https://www.linkedin.com/in/nakibulhasan2711/"],
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "Daffodil International University" },
+        "knowsAbout": ["Software Engineering", "Software Architecture", "Mobile Development", "Android", "Kotlin", "Java", "Jetpack Compose", "Clean Architecture"]
+      }
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <div style="padding: 24px; font-family: system-ui, sans-serif; color: #f3efe6; background: #0b1117">
+        <h1>MD Nakibul Hassan — Senior Software Engineer</h1>
+        <p>5+ years building scalable, high-performance software, specialising in mobile (Android). Contact: nakibhasan2711@gmail.com</p>
+      </div>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

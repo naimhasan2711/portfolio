@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="16" fill="#0b1117"/>
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="none" stroke="#c47a55" stroke-opacity=".45" stroke-width="2"/>
+  <text x="32" y="41" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24" font-weight="600" fill="#f3efe6">NH</text>
+  <circle cx="51" cy="51" r="5" fill="#c47a55"/>
+</svg>

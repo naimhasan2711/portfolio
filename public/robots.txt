@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO: replace with your real domain once deployed
+Sitemap: https://nakibulhassan.dev/sitemap.xml

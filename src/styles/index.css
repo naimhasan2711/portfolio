@@ -1,0 +1,237 @@
+@import 'tailwindcss';
+
+/* ── Theme palettes ────────────────────────────────────────────
+   Change colours here. Dark is the default; light applies when the
+   visitor flips the toggle (html[data-theme="light"]).
+   ───────────────────────────────────────────────────────────── */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1117;           /* Background */
+  --bg-2: #111a22;         /* Secondary */
+  --card: #17212b;         /* Card */
+  --border: #29333c;       /* Border */
+  --fg: #f3efe6;           /* Primary text */
+  --fg-muted: #9da6ad;     /* Secondary text */
+  --fg-subtle: #6f7a83;
+  --accent: #c47a55;       /* Copper accent */
+  --accent-soft: #d99a78;  /* Copper light */
+  --accent-deep: #9c5a3b;
+  --cool: #8e9ba5;         /* muted steel used for depth in gradients */
+  --on-accent: #0b1117;    /* text on copper buttons */
+  --line: #f3efe6;         /* hairlines & overlays (used at low opacity) */
+  --heading-from: #f3efe6;
+  --heading-to: #c9c2b4;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f3efe6;
+  --bg-2: #ebe5d9;
+  --card: #fbf8f2;
+  --border: #d9d0c2;
+  --fg: #0b1117;
+  --fg-muted: #4b555d;
+  --fg-subtle: #6d757b;
+  --accent: #9c5737;
+  --accent-soft: #b8693f;
+  --accent-deep: #7d4329;
+  --cool: #5d6b75;
+  --on-accent: #fbf8f2;
+  --line: #0b1117;
+  --heading-from: #0b1117;
+  --heading-to: #3a434b;
+}
+
+/* ── Design tokens (Tailwind utilities read the palette above) ── */
+@theme inline {
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
+
+  --color-ink-950: var(--bg);
+  --color-ink-900: var(--bg-2);
+  --color-ink-850: var(--card);
+  --color-ink-800: var(--card);
+  --color-ink-700: var(--border);
+  --color-ink-600: var(--border);
+  --color-border: var(--border);
+
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-deep: var(--accent-deep);
+  --color-cool: var(--cool);
+  --color-on-accent: var(--on-accent);
+  --color-line: var(--line);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: clip;
+    background: var(--bg);
+    transition: background-color 0.4s ease;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 35%, transparent);
+    color: var(--fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+/* ── Reusable utilities ────────────────────────────────────── */
+@utility glass {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--card) 72%, transparent),
+    color-mix(in oklab, var(--card) 45%, transparent)
+  );
+  border: 1px solid color-mix(in oklab, var(--line) 9%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+@utility hairline {
+  border-color: color-mix(in oklab, var(--line) 8%, transparent);
+}
+
+@utility text-gradient {
+  background: linear-gradient(180deg, var(--heading-from) 0%, var(--heading-to) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-accent-gradient {
+  background: linear-gradient(95deg, var(--accent-soft) 0%, var(--accent) 55%, var(--accent-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Fine engineering grid, faded at the edges */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--line) 4.5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--line) 4.5%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+@utility mask-fade {
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+
+@utility noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* Smooth colour change while the theme toggles (class added briefly by useTheme) */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    color 0.4s ease,
+    fill 0.4s ease,
+    stroke 0.4s ease !important;
+}
+
+/* ── Keyframes for CSS-only effects ────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes flow {
+  to { stroke-dashoffset: -40; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── Project dialog open/close transition ──────────────────── */
+.project-dialog {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+  transition:
+    opacity 0.35s var(--ease-out-expo),
+    transform 0.45s var(--ease-out-expo),
+    overlay 0.35s allow-discrete,
+    display 0.35s allow-discrete;
+}
+.project-dialog[open] {
+  opacity: 1;
+  transform: none;
+}
+@starting-style {
+  .project-dialog[open] {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+.project-dialog::backdrop {
+  transition: opacity 0.35s, overlay 0.35s allow-discrete, display 0.35s allow-discrete;
+  opacity: 0;
+}
+.project-dialog[open]::backdrop {
+  opacity: 1;
+}
+@starting-style {
+  .project-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
