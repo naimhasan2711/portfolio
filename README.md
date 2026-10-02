@@ -43,7 +43,7 @@ Tips
 ## Open TODOs (from the CV review)
 
 1. **Activate the contact form (one time)**: the form sends through FormSubmit (free, no key). After deploying, send yourself one test message from the live site; FormSubmit emails `nakibhasan2711@gmail.com` an **Activate Form** link. Click it, and every later message lands in your inbox. (Optional: paste a Web3Forms key into `src/data/contact.ts` to use Web3Forms instead.)
-2. **Domain**: the site is live at https://portfolio-delta-plum-99.vercel.app. If you add a custom domain, update it in `index.html`, `public/robots.txt`, `public/sitemap.xml` and `src/data/site.ts`.
+2. **Domain**: the site is live at https://portfolio-nakibul-dev.vercel.app. If you add a custom domain, update it in `index.html`, `public/robots.txt`, `public/sitemap.xml` and `src/data/site.ts`.
 3. **GitHub**: not in the CV, so not shown (see tip above).
 
 ## Deploying
