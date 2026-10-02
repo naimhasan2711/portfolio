@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: replace with your real domain once deployed -->
+<!-- Update this if you move to a custom domain -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://nakibulhassan.dev/</loc>
+    <loc>https://portfolio-delta-plum-99.vercel.app/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>

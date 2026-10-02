@@ -7,10 +7,10 @@
  */
 
 /**
- * TODO: set this to your real domain once deployed
+ * Live site URL — update here too if you add a custom domain
  * (also update index.html, public/robots.txt and public/sitemap.xml).
  */
-export const siteUrl = 'https://nakibulhassan.dev'
+export const siteUrl = 'https://portfolio-delta-plum-99.vercel.app'
 
 /**
  * 3D object in the middle of the hero:
