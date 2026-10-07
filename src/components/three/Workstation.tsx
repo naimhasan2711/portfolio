@@ -2,9 +2,10 @@ import { useFrame } from '@react-three/fiber'
 import { Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import * as THREE from 'three'
 import { ErrorBoundary } from '../common/ErrorBoundary'
+import { AvatarModel, type AvatarPose } from './AvatarModel'
 import { ChairModel } from './ChairModel'
 import { usePalette } from './palette'
-import { Developer, Rod, STEAM_STOPS, useRadialTexture, useRoundedSlab, useWoodTexture } from './Workspace'
+import { Developer, Headset, Rod, STEAM_STOPS, useRadialTexture, useRoundedSlab, useWoodTexture } from './Workspace'
 
 /**
  * Corner home-office diorama, modelled on a real developer workstation:
@@ -23,6 +24,30 @@ type V3 = [number, number, number]
 const CHAIR_YAW = Math.PI
 
 const FLOOR_Y = -0.95
+const KEYS_Y = 0.05 // key tops (desk top + keyboard)
+
+/** Where the avatar sits, rests its hands and feet (workstation space). */
+const AVATAR_POSE: AvatarPose = {
+  pelvis: [0.02, -0.26, 0.3],
+  leftHand: [-0.1, 0.085, -0.2],
+  rightHand: [0.14, 0.085, -0.2],
+  leftFoot: [-0.1, FLOOR_Y + 0.06, -0.12],
+  rightFoot: [0.14, FLOOR_Y + 0.06, -0.12],
+  keysY: KEYS_Y,
+  facing: [0, 0, -1],
+  recline: 0.16, // upright, leaning slightly toward the desk
+}
+const HEADSET_SCALE = 0.9
+const HEADSET_LIFT = 0.07
+
+/** The previous code-built developer (fallback while the avatar loads). */
+function CodedDeveloper() {
+  return (
+    <group position={[0.02, -0.02, -0.68]} rotation={[0, -Math.PI / 2, 0]}>
+      <Developer />
+    </group>
+  )
+}
 const DESK_TOP = 0.022
 
 /* ── Canvas textures: code editors, document, whiteboard ───────── */
@@ -373,63 +398,71 @@ function useLiveTexture(
   return state.texture
 }
 
-/* ── Round rug ────────────────────────────────────────────────── */
+/* ── Room floor: wooden planks ───────────────────────────────── */
 
-/** Woven round rug: concentric bands with a copper border, drawn on a canvas. */
-function drawRug(ctx: CanvasRenderingContext2D, size: number, base: string, band: string, accent: string) {
-  const r = size / 2
-  ctx.clearRect(0, 0, size, size)
-  ctx.fillStyle = base
-  ctx.beginPath()
-  ctx.arc(r, r, r, 0, Math.PI * 2)
-  ctx.fill()
-  // outer copper border + inner bands
-  const ring = (radius: number, width: number, color: string, alpha = 1) => {
-    ctx.globalAlpha = alpha
-    ctx.strokeStyle = color
-    ctx.lineWidth = width
-    ctx.beginPath()
-    ctx.arc(r, r, radius, 0, Math.PI * 2)
-    ctx.stroke()
-    ctx.globalAlpha = 1
+/** Oak-style plank floor drawn on a canvas (staggered boards, seams, grain). */
+function drawPlanks(ctx: CanvasRenderingContext2D, size: number, base: string, seam: string) {
+  const rows = 8
+  const boardH = size / rows
+  let seed = 21
+  const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+  const tint = new THREE.Color(base)
+  for (let r = 0; r < rows; r++) {
+    let x = -rand() * size * 0.5
+    while (x < size) {
+      const len = size * (0.45 + rand() * 0.4)
+      const c = tint.clone().offsetHSL(0, (rand() - 0.5) * 0.06, (rand() - 0.5) * 0.06)
+      ctx.fillStyle = `#${c.getHexString()}`
+      ctx.fillRect(x, r * boardH, len, boardH)
+      // grain
+      ctx.globalAlpha = 0.12
+      ctx.strokeStyle = seam
+      for (let g = 0; g < 6; g++) {
+        const y = r * boardH + rand() * boardH
+        ctx.lineWidth = 0.6 + rand()
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        for (let gx = x; gx < x + len; gx += 16) ctx.lineTo(gx, y + Math.sin(gx * 0.03 + g) * 1.5)
+        ctx.stroke()
+      }
+      ctx.globalAlpha = 1
+      // end seam
+      ctx.fillStyle = seam
+      ctx.fillRect(x, r * boardH, 2, boardH)
+      x += len
+    }
+    // long seam between rows
+    ctx.fillStyle = seam
+    ctx.fillRect(0, r * boardH, size, 2)
   }
-  ring(r - 16, 20, accent, 0.9)
-  ring(r - 44, 4, accent, 0.6)
-  ring(r * 0.62, 26, band, 0.55)
-  ring(r * 0.62 - 26, 3, accent, 0.45)
-  ring(r * 0.3, 14, band, 0.45)
-  // woven texture: fine noise
-  const img = ctx.getImageData(0, 0, size, size)
-  let seed = 9
-  for (let i = 0; i < img.data.length; i += 4) {
-    seed = (seed * 16807) % 2147483647
-    const n = ((seed / 2147483647) - 0.5) * 18
-    img.data[i] = Math.max(0, Math.min(255, (img.data[i] ?? 0) + n))
-    img.data[i + 1] = Math.max(0, Math.min(255, (img.data[i + 1] ?? 0) + n))
-    img.data[i + 2] = Math.max(0, Math.min(255, (img.data[i + 2] ?? 0) + n))
-  }
-  ctx.putImageData(img, 0, 0)
 }
 
-function Rug() {
+function Floor() {
   const c = usePalette()
   const shadow = useRadialTexture(STEAM_STOPS)
-  const texture = useCanvasTexture(1024, 1024, (ctx, w) => drawRug(ctx, w, c.rug, c.rugBand, c.accent), [c.rug, c.rugBand, c.accent])
+  const texture = useCanvasTexture(1024, 1024, (ctx, w) => drawPlanks(ctx, w, c.floorWood, c.floorSeam), [c.floorWood, c.floorSeam])
+  useEffect(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    texture.repeat.set(2.2, 1.6)
+    texture.needsUpdate = true
+  }, [texture])
+  const W = 4.3
+  const D = 3.1
   return (
-    <group position={[0.05, FLOOR_Y, -0.45]}>
-      {/* soft shadow under the whole setup */}
-      <mesh position={[0, -0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[2.75, 64]} />
+    <group position={[0.05, FLOOR_Y, -0.4]}>
+      {/* soft shadow under the platform */}
+      <mesh position={[0, -0.09, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[W * 1.5, D * 1.6]} />
         <meshBasicMaterial map={shadow} color={c.shadow} transparent opacity={c.shadowOpacity * 0.8} depthWrite={false} />
       </mesh>
-      {/* the rug: a thin disc with a woven top */}
-      <mesh position={[0, -0.006, 0]} receiveShadow>
-        <cylinderGeometry args={[2.2, 2.2, 0.012, 96]} />
-        <meshStandardMaterial color={c.rug} roughness={1} />
+      {/* floor slab: plank top + darker edges */}
+      <mesh position={[0, -0.04, 0]} receiveShadow>
+        <boxGeometry args={[W, 0.08, D]} />
+        <meshStandardMaterial color={c.floorEdge} roughness={0.8} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[2.2, 96]} />
-        <meshStandardMaterial map={texture} roughness={1} />
+      <mesh position={[0, 0.0005, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[W, D]} />
+        <meshStandardMaterial map={texture} roughness={0.55} metalness={0.02} />
       </mesh>
     </group>
   )
@@ -441,7 +474,7 @@ function Room() {
   const c = usePalette()
   return (
     <group>
-      <Rug />
+      <Floor />
       {/* soft overhead lights (the room has no walls — it floats in the hero) */}
       <pointLight position={[-0.4, 2.0, -0.4]} intensity={2.2} distance={4} color={c.led} />
       <pointLight position={[1.3, 2.0, 0.1]} intensity={1.6} distance={3.5} color={c.led} />
@@ -1240,9 +1273,17 @@ export function Workstation({ shadows = false }: { shadows?: boolean }) {
         </Suspense>
       </ErrorBoundary>
       {/* the developer, seated at the keyboard (Developer faces −x, so turn it to face −z) */}
-      <group position={[0.02, -0.02, -0.68]} rotation={[0, -Math.PI / 2, 0]}>
-        <Developer />
-      </group>
+      {/* rigged avatar (≈0.5 MB), posed to sit and type; the coded developer shows while it loads */}
+      <ErrorBoundary fallback={<CodedDeveloper />}>
+        <Suspense fallback={<CodedDeveloper />}>
+          <AvatarModel pose={AVATAR_POSE} shadows={shadows}>
+            {/* headset sized for the avatar's head (coded headset faces −x; avatar faces −z) */}
+            <group rotation={[0, Math.PI / 2, 0]} scale={HEADSET_SCALE} position={[0, HEADSET_LIFT, 0]}>
+              <Headset />
+            </group>
+          </AvatarModel>
+        </Suspense>
+      </ErrorBoundary>
     </group>
   )
 }

@@ -368,6 +368,9 @@ function Core() {
 
 /* ── Rig: composition, pointer, scroll & lighting ────────────── */
 
+/** Downward viewing angle for the room scenes (radians). Higher = more top-down. */
+const ROOM_PITCH = 0.55
+
 function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
   const c = usePalette()
   const group = useRef<THREE.Group>(null)
@@ -444,7 +447,7 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
       // Fixed viewing pitch (applied outside the spin, so the turntable stays level).
       // Objects above screen centre are seen from below, so add the angle to the camera.
       const room = heroCenterpiece === 'workspace' || heroCenterpiece === 'workstation'
-      g.rotation.x = room ? 0.2 + Math.atan2(g.position.y, camera.position.z) : 0
+      g.rotation.x = room ? ROOM_PITCH + Math.atan2(g.position.y, camera.position.z) : 0
       g.position.x += (baseX - g.position.x) * k
       g.position.y += (baseY + scroll * 1.6 - g.position.y) * k
       g.scale.setScalar(g.scale.x + (baseScale - g.scale.x) * k)

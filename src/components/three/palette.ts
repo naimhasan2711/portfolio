@@ -11,7 +11,7 @@ const palettes = {
     desk: '#222c36', deskEdge: '#c47a55', chair: '#1a232c', skin: '#c4927a', hair: '#1b2027',
     shirt: '#5f7891', pants: '#2a343e', code: '#9da6ad', shadow: '#000000', shadowOpacity: 0.55,
     wood: '#5b3b27', woodGrain: '#3f2717', brass: '#c9a26b', leather: '#7d4a2f', chrome: '#c9ced3', keys: '#ece7de', steam: '#f3efe6', envIntensity: 0.45, castShadowOpacity: 0.45,
-    rug: '#3a3f45', rugBand: '#23272c', wall: '#3a4047', wallSide: '#343a41', floor: '#262b31', cabinet: '#2b3238', led: '#f6efe2', ledGlow: 0.55, mat: '#111417',
+    floorWood: '#6b4a33', floorSeam: '#2b1c12', floorEdge: '#2a1d14', wall: '#3a4047', wallSide: '#343a41', floor: '#262b31', cabinet: '#2b3238', led: '#f6efe2', ledGlow: 0.55, mat: '#111417',
   },
   light: {
     accent: '#9c5737', accent2: '#b8693f', steel: '#5d6b75',
@@ -21,7 +21,7 @@ const palettes = {
     desk: '#2a3540', deskEdge: '#9c5737', chair: '#222d38', skin: '#bd8c73', hair: '#1b2027',
     shirt: '#556d86', pants: '#2a343e', code: '#9da6ad', shadow: '#3a2a20', shadowOpacity: 0.28,
     wood: '#5b3b27', woodGrain: '#3f2717', brass: '#b8925c', leather: '#7d4a2f', chrome: '#b9bfc5', keys: '#f4f0e8', steam: '#8e9ba5', envIntensity: 0.6, castShadowOpacity: 0.22,
-    rug: '#e3dccf', rugBand: '#cfc5b5', wall: '#e6e1d8', wallSide: '#ddd7cc', floor: '#cbc3b6', cabinet: '#48515a', led: '#fff6e8', ledGlow: 0.35, mat: '#16191c',
+    floorWood: '#b48a62', floorSeam: '#6e4f35', floorEdge: '#6e4f35', wall: '#e6e1d8', wallSide: '#ddd7cc', floor: '#cbc3b6', cabinet: '#48515a', led: '#fff6e8', ledGlow: 0.35, mat: '#16191c',
   },
 } as const
 

@@ -655,7 +655,7 @@ function Arm({ side }: { side: 1 | -1 }) {
 }
 
 /** Over-ear headset with a boom mic, sized to the developer's head (head faces −x). */
-function Headset() {
+export function Headset() {
   const c = usePalette()
   const shell = <meshStandardMaterial color="#16181b" metalness={0.35} roughness={0.35} />
   return (
