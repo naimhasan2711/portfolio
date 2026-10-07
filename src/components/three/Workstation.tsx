@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber'
-import { Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import * as THREE from 'three'
 import { ErrorBoundary } from '../common/ErrorBoundary'
 import { AvatarModel, type AvatarPose } from './AvatarModel'
@@ -927,7 +927,7 @@ function CoffeeMug() {
     })
   })
   return (
-    <group position={[-0.52, DESK_TOP, -0.2]}>
+    <group position={[-0.56, DESK_TOP, -0.4]}>
       <mesh position={[0, 0.055, 0]} castShadow>
         <cylinderGeometry args={[0.042, 0.038, 0.105, 32, 1, true]} />
         <meshPhysicalMaterial color="#f1eee8" roughness={0.25} clearcoat={0.6} side={THREE.DoubleSide} />
@@ -1023,8 +1023,8 @@ function Desk() {
 
       <PcTower />
       {/* books next to the tower */}
-      <Book position={[0.95, DESK_TOP + 0.02, -0.38]} size={[0.24, 0.04, 0.17]} color="#151719" rotationY={-0.1} />
-      <Book position={[0.95, DESK_TOP + 0.06, -0.38]} size={[0.23, 0.04, 0.16]} color="#c9a227" rotationY={0.05} />
+      <Book position={[0.93, DESK_TOP + 0.02, -0.45]} size={[0.24, 0.04, 0.17]} color="#151719" rotationY={-0.1} />
+      <Book position={[0.93, DESK_TOP + 0.06, -0.45]} size={[0.23, 0.04, 0.16]} color="#c9a227" rotationY={0.05} />
 
       <Keyboard />
       {/* mouse */}
@@ -1034,9 +1034,9 @@ function Desk() {
       </mesh>
       <CoffeeMug />
       {/* books at the front-left corner */}
-      <Book position={[-1.05, DESK_TOP + 0.02, -0.2]} size={[0.3, 0.04, 0.22]} color="#e8e2d4" rotationY={0.25} />
-      <Book position={[-1.02, DESK_TOP + 0.06, -0.21]} size={[0.28, 0.04, 0.2]} color="#151719" rotationY={0.12} />
-      <mesh position={[-1.02, DESK_TOP + 0.081, -0.21]} rotation={[-Math.PI / 2, 0, -0.12]}>
+      <Book position={[-1.0, DESK_TOP + 0.02, -0.42]} size={[0.3, 0.04, 0.22]} color="#e8e2d4" rotationY={0.25} />
+      <Book position={[-0.97, DESK_TOP + 0.06, -0.43]} size={[0.28, 0.04, 0.2]} color="#151719" rotationY={0.12} />
+      <mesh position={[-0.97, DESK_TOP + 0.081, -0.43]} rotation={[-Math.PI / 2, 0, -0.12]}>
         <planeGeometry args={[0.2, 0.06]} />
         <meshStandardMaterial color="#c9a227" roughness={0.7} />
       </mesh>
@@ -1045,7 +1045,7 @@ function Desk() {
         <planeGeometry args={[0.07, 0.07]} />
         <meshStandardMaterial color="#f2d36b" roughness={0.8} />
       </mesh>
-      <mesh position={[-0.82, DESK_TOP + 0.045, -0.35]} castShadow>
+      <mesh position={[-0.8, DESK_TOP + 0.045, -0.5]} castShadow>
         <cylinderGeometry args={[0.035, 0.038, 0.09, 24]} />
         <meshStandardMaterial color="#141618" roughness={0.5} />
       </mesh>
@@ -1264,25 +1264,25 @@ export function Workstation({ shadows = false }: { shadows?: boolean }) {
       <Shelves />
       <Whiteboard />
       <Desk />
-      {/* real chair model (≈0.5 MB); the coded gaming chair shows while it loads or if it fails */}
+      {/* real chair model (≈0.5 MB); the coded gaming chair is used only if it fails to load */}
       <ErrorBoundary fallback={<GamingChair />}>
-        <Suspense fallback={<GamingChair />}>
+        <>
           <group position={[0.02, FLOOR_Y, 0.36]} rotation={[0, CHAIR_YAW, 0]}>
             <ChairModel shadows={shadows} />
           </group>
-        </Suspense>
+        </>
       </ErrorBoundary>
       {/* the developer, seated at the keyboard (Developer faces −x, so turn it to face −z) */}
-      {/* rigged avatar (≈0.5 MB), posed to sit and type; the coded developer shows while it loads */}
+      {/* rigged avatar (≈0.5 MB), posed to sit and type; the coded developer is used only if it fails to load */}
       <ErrorBoundary fallback={<CodedDeveloper />}>
-        <Suspense fallback={<CodedDeveloper />}>
+        <>
           <AvatarModel pose={AVATAR_POSE} shadows={shadows}>
             {/* headset sized for the avatar's head (coded headset faces −x; avatar faces −z) */}
             <group rotation={[0, Math.PI / 2, 0]} scale={HEADSET_SCALE} position={[0, HEADSET_LIFT, 0]}>
               <Headset />
             </group>
           </AvatarModel>
-        </Suspense>
+        </>
       </ErrorBoundary>
     </group>
   )

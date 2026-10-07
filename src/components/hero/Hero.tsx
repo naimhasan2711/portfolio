@@ -1,6 +1,6 @@
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { ArrowDown, ArrowRight, Minus, Plus, RotateCcw, Rotate3d } from 'lucide-react'
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { experiences } from '../../data/experience'
 import { profile, socialLinks } from '../../data/profile'
 import { hasWebGL } from '../../utils/device'
@@ -22,6 +22,13 @@ const item = {
 export function Hero() {
   const [webgl] = useState(() => hasWebGL())
   const [sceneReady, setSceneReady] = useState(false)
+  // true once the 3D models have downloaded and the scene has appeared
+  const [modelReady, setModelReady] = useState(false)
+  useEffect(() => {
+    const onReady = () => setModelReady(true)
+    window.addEventListener('hero-model-ready', onReady)
+    return () => window.removeEventListener('hero-model-ready', onReady)
+  }, [])
   const current = experiences[0]
   const [first, ...rest] = profile.name.split(' ')
   const firstLine = [first, rest.slice(0, -1).join(' ')].filter(Boolean).join(' ')
@@ -125,10 +132,34 @@ export function Hero() {
             className="relative mx-auto h-[clamp(300px,92vw,520px)] w-full max-w-2xl cursor-grab touch-pan-y select-none active:cursor-grabbing lg:h-[min(74vh,660px)] lg:max-w-none"
           />
           {webgl && (
+            <AnimatePresence>
+              {!modelReady && (
+                <motion.div
+                  key="loader"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.5 }}
+                  role="status"
+                  className="pointer-events-none absolute inset-0 grid place-items-center"
+                >
+                  <div className="flex flex-col items-center gap-4">
+                    <span className="relative grid size-16 place-items-center">
+                      <span className="absolute inset-0 animate-spin rounded-full border-2 border-line/10 border-t-accent [animation-duration:1.1s]" />
+                      <span className="absolute inset-2 animate-spin rounded-full border border-line/5 border-b-accent-soft/70 [animation-direction:reverse] [animation-duration:1.8s]" />
+                      <span className="size-2 animate-[pulse-dot_1.6s_ease-in-out_infinite] rounded-full bg-accent" />
+                    </span>
+                    <span className="font-mono text-[10px] tracking-[0.25em] text-fg-subtle uppercase">Loading workspace</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
+          {webgl && (
             <motion.p
               initial={{ opacity: 0 }}
-              animate={{ opacity: sceneReady ? 1 : 0 }}
-              transition={{ delay: 1.4, duration: 0.8 }}
+              animate={{ opacity: modelReady ? 1 : 0 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
               className="pointer-events-none absolute bottom-1 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-line/10 bg-ink-950/60 px-3 py-1 whitespace-nowrap font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase backdrop-blur-sm lg:top-4 lg:bottom-auto"
             >
               <Rotate3d size={12} aria-hidden="true" className="text-accent" /> Drag to rotate · pinch to zoom
@@ -137,8 +168,8 @@ export function Hero() {
           {webgl && (
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: sceneReady ? 1 : 0 }}
-              transition={{ delay: 1.4, duration: 0.8 }}
+              animate={{ opacity: modelReady ? 1 : 0 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
               role="group"
               aria-label="3D view controls"
               className="absolute right-1 bottom-1 flex flex-col gap-1.5 lg:top-4 lg:right-4 lg:bottom-auto"

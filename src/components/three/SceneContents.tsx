@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { heroCenterpiece } from '../../data/site'
@@ -369,18 +369,22 @@ function Core() {
 /* ── Rig: composition, pointer, scroll & lighting ────────────── */
 
 /** Downward viewing angle for the room scenes (radians). Higher = more top-down. */
-const ROOM_PITCH = 0.55
+const ROOM_PITCH = 0.36
 
 function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
   const c = usePalette()
   const group = useRef<THREE.Group>(null)
   const device = useRef<THREE.Group>(null)
   const light = useRef<THREE.PointLight>(null)
-  const { size, camera } = useThree()
+  const { size, camera, gl, scene: three } = useThree()
   // Model footprint at scale 1 (measured once after mount): width, height and centre offset.
-  const footprint = useRef({ w: 3.4, h: 3.6, cx: 0, cy: 0 })
+  const footprint = useRef({ w: 3.4, h: 3.6, cx: 0, cy: 0, pivotX: 0, pivotZ: 0 })
+  /** 0 → 1 entrance animation, started when the model first appears. */
+  const intro = useRef(-1)
+  const measured = useRef(false)
 
-  useEffect(() => {
+  /** Measures the model's footprint once its meshes exist (they may load after mount). */
+  const measure = () => {
     const d = device.current
     if (!d) return
     // measure in the group's local space (ignore its current mouse tilt / scale)
@@ -403,9 +407,18 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
       const ctr = new THREE.Vector3()
       box.getSize(s)
       box.getCenter(ctr)
-      footprint.current = { w: s.x, h: s.y, cx: ctr.x, cy: ctr.y }
+      // Spin around the model's own centre (not the group origin), so it stays put
+      // while rotating; fit using the widest it can get at any angle (its diagonal).
+      const room = heroCenterpiece === 'workspace' || heroCenterpiece === 'workstation'
+      const spanW = room ? Math.hypot(s.x, s.z) : s.x
+      footprint.current = { w: spanW, h: s.y, cx: room ? 0 : ctr.x, cy: ctr.y, pivotX: room ? ctr.x : 0, pivotZ: room ? ctr.z : 0 }
+      measured.current = true
+      // compile every shader up front so the reveal never stalls on a blank frame
+      gl.compile(three, camera)
+      intro.current = 0
+      window.dispatchEvent(new Event('hero-model-ready'))
     }
-  }, [])
+  }
 
   // Fallback composition (before the stage is measured).
   const wide = size.width >= 1024
@@ -422,8 +435,8 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
     const stageW = sceneStage.w * upp
     const stageH = sceneStage.h * upp
     const f = footprint.current
-    // Fill the stage height; the scene may spill a little past its column width (it's decorative).
-    const s = Math.min((stageW * 1.3) / f.w, stageH / f.h) * 0.94 * zoom.current
+    // Fit the stage (the diagonal already allows for rotation, so a little spill is fine).
+    const s = Math.min((stageW * 1.35) / f.w, stageH / f.h) * 0.96 * zoom.current
     const cx = (sceneStage.x + sceneStage.w / 2 - size.width / 2) * upp
     const cy = -(sceneStage.y + sceneStage.h / 2 - size.height / 2) * upp
     return { x: cx - f.cx * s, y: cy - f.cy * s, s }
@@ -434,22 +447,30 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
     const k = 1 - Math.pow(0.002, dt) // frame-rate independent smoothing
     const { x, y, scroll } = sceneInput
     const g = group.current
+    if (!measured.current) measure()
     zoom.current += (sceneInput.zoom - zoom.current) * (1 - Math.pow(0.001, dt))
     target.current = computeTarget()
-    const { x: baseX, y: baseY, s: baseScale } = target.current
+    const { x: baseX, y: baseY, s: fitScale } = target.current
+    // entrance: rise, grow and settle with a quarter-turn (eased)
+    if (intro.current >= 0 && intro.current < 1) intro.current = Math.min(1, intro.current + dt / 1.6)
+    const ip = intro.current < 0 ? 0 : 1 - Math.pow(1 - intro.current, 3)
+    const baseScale = fitScale * (0.82 + 0.18 * ip)
+    const introSpin = (1 - ip) * -0.9
+    const introDrop = (1 - ip) * -0.6
     if (g) {
+      g.visible = intro.current >= 0 || heroCenterpiece !== 'workstation'
       // Turntable: rotation only around the vertical axis, driven by dragging.
       if (!sceneInput.dragging && Math.abs(sceneInput.spinVelocity) > 0.0001) {
         sceneInput.spin += sceneInput.spinVelocity * dt * 60 // glide after release
         sceneInput.spinVelocity *= Math.pow(0.92, dt * 60)
       }
-      g.rotation.y += (sceneInput.spin - g.rotation.y) * (1 - Math.pow(0.0001, dt))
+      g.rotation.y += (sceneInput.spin + introSpin - g.rotation.y) * (1 - Math.pow(0.0001, dt))
       // Fixed viewing pitch (applied outside the spin, so the turntable stays level).
       // Objects above screen centre are seen from below, so add the angle to the camera.
       const room = heroCenterpiece === 'workspace' || heroCenterpiece === 'workstation'
       g.rotation.x = room ? ROOM_PITCH + Math.atan2(g.position.y, camera.position.z) : 0
       g.position.x += (baseX - g.position.x) * k
-      g.position.y += (baseY + scroll * 1.6 - g.position.y) * k
+      g.position.y += (baseY + introDrop + scroll * 1.6 - g.position.y) * k
       g.scale.setScalar(g.scale.x + (baseScale - g.scale.x) * k)
     }
     if (device.current) {
@@ -458,6 +479,8 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
       device.current.rotation.y = still ? 0 : Math.sin(t * 0.35) * 0.35 - (heroCenterpiece === 'phone' ? 0.25 : 0)
       device.current.rotation.z = still ? 0 : Math.sin(t * 0.25) * 0.04
       device.current.position.y = still ? 0 : Math.sin(t * 0.8) * 0.06
+      device.current.position.x = -footprint.current.pivotX
+      device.current.position.z = -footprint.current.pivotZ
     }
     if (light.current) {
       light.current.position.x += (x * 4 + baseX - light.current.position.x) * k
@@ -488,7 +511,12 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
       <pointLight ref={light} position={[2, 0, 3]} intensity={18} distance={9} color={c.accent} />
       <group ref={group}>
         <group ref={device}>
-          {heroCenterpiece === 'workstation' ? <Workstation shadows={shadows} /> : heroCenterpiece === 'workspace' ? <Workspace shadows={shadows} /> : heroCenterpiece === 'core' ? <Core /> : <Device />}
+          {/* the workstation appears in one piece once its models (avatar, chair) are loaded */}
+          {heroCenterpiece === 'workstation' ? (
+            <Suspense fallback={null}>
+              <Workstation shadows={shadows} />
+            </Suspense>
+          ) : heroCenterpiece === 'workspace' ? <Workspace shadows={shadows} /> : heroCenterpiece === 'core' ? <Core /> : <Device />}
         </group>
         {children}
       </group>
