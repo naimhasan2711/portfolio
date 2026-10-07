@@ -1,6 +1,8 @@
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import * as THREE from 'three'
+import { ErrorBoundary } from '../common/ErrorBoundary'
+import { ChairModel } from './ChairModel'
 import { usePalette } from './palette'
 import { Developer, Rod, STEAM_STOPS, useRadialTexture, useRoundedSlab, useWoodTexture } from './Workspace'
 
@@ -16,6 +18,9 @@ import { Developer, Rod, STEAM_STOPS, useRadialTexture, useRoundedSlab, useWoodT
  */
 
 type V3 = [number, number, number]
+
+/** Rotation that turns the chair model's seat toward the desk. */
+const CHAIR_YAW = Math.PI
 
 const FLOOR_Y = -0.95
 const DESK_TOP = 0.022
@@ -1226,7 +1231,14 @@ export function Workstation({ shadows = false }: { shadows?: boolean }) {
       <Shelves />
       <Whiteboard />
       <Desk />
-      <GamingChair />
+      {/* real chair model (≈0.5 MB); the coded gaming chair shows while it loads or if it fails */}
+      <ErrorBoundary fallback={<GamingChair />}>
+        <Suspense fallback={<GamingChair />}>
+          <group position={[0.02, FLOOR_Y, 0.36]} rotation={[0, CHAIR_YAW, 0]}>
+            <ChairModel shadows={shadows} />
+          </group>
+        </Suspense>
+      </ErrorBoundary>
       {/* the developer, seated at the keyboard (Developer faces −x, so turn it to face −z) */}
       <group position={[0.02, -0.02, -0.68]} rotation={[0, -Math.PI / 2, 0]}>
         <Developer />
