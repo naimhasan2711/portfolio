@@ -5,7 +5,7 @@ import { ErrorBoundary } from '../common/ErrorBoundary'
 import { AvatarModel, type AvatarPose } from './AvatarModel'
 import { ChairModel } from './ChairModel'
 import { usePalette } from './palette'
-import { Developer, Headset, Rod, STEAM_STOPS, useRadialTexture, useRoundedSlab, useWoodTexture } from './Workspace'
+import { Developer, Rod, STEAM_STOPS, useRadialTexture, useRoundedSlab, useWoodTexture } from './Workspace'
 
 /**
  * Corner home-office diorama, modelled on a real developer workstation:
@@ -37,8 +37,6 @@ const AVATAR_POSE: AvatarPose = {
   facing: [0, 0, -1],
   recline: 0.16, // upright, leaning slightly toward the desk
 }
-const HEADSET_SCALE = 0.9
-const HEADSET_LIFT = 0.07
 
 /** The previous code-built developer (fallback while the avatar loads). */
 function CodedDeveloper() {
@@ -1276,12 +1274,7 @@ export function Workstation({ shadows = false }: { shadows?: boolean }) {
       {/* rigged avatar (≈0.5 MB), posed to sit and type; the coded developer is used only if it fails to load */}
       <ErrorBoundary fallback={<CodedDeveloper />}>
         <>
-          <AvatarModel pose={AVATAR_POSE} shadows={shadows}>
-            {/* headset sized for the avatar's head (coded headset faces −x; avatar faces −z) */}
-            <group rotation={[0, Math.PI / 2, 0]} scale={HEADSET_SCALE} position={[0, HEADSET_LIFT, 0]}>
-              <Headset />
-            </group>
-          </AvatarModel>
+          <AvatarModel pose={AVATAR_POSE} shadows={shadows} />
         </>
       </ErrorBoundary>
     </group>
