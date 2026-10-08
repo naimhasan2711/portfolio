@@ -1,7 +1,8 @@
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react'
 import * as THREE from 'three'
 import { ErrorBoundary } from '../common/ErrorBoundary'
+import { revealState } from './input'
 import { AvatarModel, type AvatarPose } from './AvatarModel'
 import { ChairModel } from './ChairModel'
 import { usePalette } from './palette'
@@ -435,6 +436,59 @@ function drawPlanks(ctx: CanvasRenderingContext2D, size: number, base: string, s
   }
 }
 
+/**
+ * Glowing copper outline of the floor that rides the reveal's clip plane,
+ * so the room looks "scanned" into existence from the floor up.
+ */
+function ScanFrame({ w, d }: { w: number; d: number }) {
+  const c = usePalette()
+  const group = useRef<THREE.Group>(null)
+  const fill = useRef<THREE.MeshBasicMaterial>(null)
+  const line = useRef<THREE.LineBasicMaterial>(null)
+  const outline = useMemo(() => {
+    const g = new THREE.BufferGeometry().setFromPoints(
+      [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([x, z]) => new THREE.Vector3(x, 0, z)),
+    )
+    return g
+  }, [w, d])
+  useEffect(() => () => outline.dispose(), [outline])
+  const p0 = useMemo(() => new THREE.Vector3(), [])
+  const up = useMemo(() => new THREE.Vector3(), [])
+
+  useFrame(() => {
+    const g = group.current
+    const plane = revealState.plane
+    const glow = revealState.glow
+    if (!g) return
+    g.visible = glow > 0.01 && !!plane
+    if (!plane || !g.visible) return
+    // slide along local Y until the frame sits exactly on the clip plane
+    g.position.y = 0
+    g.updateWorldMatrix(true, false)
+    p0.setFromMatrixPosition(g.matrixWorld)
+    up.set(0, 1, 0).transformDirection(g.matrixWorld)
+    const denom = up.dot(plane.normal)
+    if (Math.abs(denom) > 1e-4) {
+      const scale = g.matrixWorld.getMaxScaleOnAxis()
+      g.position.y = -plane.distanceToPoint(p0) / denom / scale
+    }
+    if (fill.current) fill.current.opacity = 0.1 * glow
+    if (line.current) line.current.opacity = 0.95 * glow
+  })
+
+  return (
+    <group ref={group} visible={false}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} userData={{ noClip: true }} renderOrder={10}>
+        <planeGeometry args={[w, d]} />
+        <meshBasicMaterial ref={fill} color={c.accent} transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} toneMapped={false} />
+      </mesh>
+      <lineLoop geometry={outline} userData={{ noClip: true }} renderOrder={11}>
+        <lineBasicMaterial ref={line} color={c.accent2} transparent opacity={0} depthWrite={false} toneMapped={false} />
+      </lineLoop>
+    </group>
+  )
+}
+
 function Floor() {
   const c = usePalette()
   const shadow = useRadialTexture(STEAM_STOPS)
@@ -462,6 +516,7 @@ function Floor() {
         <planeGeometry args={[W, D]} />
         <meshStandardMaterial map={texture} roughness={0.55} metalness={0.02} />
       </mesh>
+      <ScanFrame w={W} d={D} />
     </group>
   )
 }
@@ -516,7 +571,7 @@ function shelfBooks(x0: number, x1: number, y: number, z: number, seed: number):
 
 function Books({ books }: { books: BookSpec[] }) {
   const ref = useRef<THREE.InstancedMesh>(null)
-  useEffect(() => {
+  useLayoutEffect(() => {
     const m = ref.current
     if (!m) return
     const o = new THREE.Object3D()
@@ -544,7 +599,7 @@ function Books({ books }: { books: BookSpec[] }) {
 function Plant({ position, scale = 1, seed = 1 }: { position: V3; scale?: number; seed?: number }) {
   const ref = useRef<THREE.InstancedMesh>(null)
   const COUNT = 22
-  useEffect(() => {
+  useLayoutEffect(() => {
     const m = ref.current
     if (!m) return
     let s = seed * 97
@@ -583,7 +638,7 @@ function Plant({ position, scale = 1, seed = 1 }: { position: V3; scale?: number
 function Ivy({ position }: { position: V3 }) {
   const ref = useRef<THREE.InstancedMesh>(null)
   const COUNT = 90
-  useEffect(() => {
+  useLayoutEffect(() => {
     const m = ref.current
     if (!m) return
     let s = 41
@@ -781,7 +836,7 @@ function Keyboard() {
   const keys = useRef<THREE.InstancedMesh>(null)
   const ROWS = 5
   const COLS = 15
-  useEffect(() => {
+  useLayoutEffect(() => {
     const m = keys.current
     if (!m) return
     const o = new THREE.Object3D()

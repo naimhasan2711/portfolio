@@ -17,6 +17,17 @@ export const sceneInput = {
   zoom: 1,
 }
 
+/**
+ * Entrance "build-up" reveal, shared between the rig (which drives it) and the
+ * workstation (which draws the glowing scan frame on the rising clip plane).
+ */
+export const revealState = {
+  /** World-space clip plane (everything above it is hidden). Null when inactive. */
+  plane: null as import('three').Plane | null,
+  /** Scan frame glow, 0..1. */
+  glow: 0,
+}
+
 export const ZOOM_MIN = 0.65
 export const ZOOM_MAX = 1.8
 

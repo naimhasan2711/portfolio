@@ -116,7 +116,7 @@ All text lives in **`src/data/`**, so you rarely need to touch the components.
 
 **Tips**
 - **Add a project:** copy an entry in `projects.ts` and set `featured: true` for a large card. Add `link: 'https://…'` to show a "Visit project" button. Then add its `id` to the matching job's `projectIds` in `experience.ts`.
-- **Add GitHub:** uncomment the GitHub line in `socialLinks` in `profile.ts`.
+- **Social links** (LinkedIn, GitHub, email) live in `socialLinks` in `profile.ts`.
 - **Switch the hero 3D object:** set `heroCenterpiece` in `site.ts` to `'workstation'` (the default), `'workspace'`, `'core'` or `'phone'`.
 - **Reorder or remove sections:** edit the list in `src/App.tsx`.
 
@@ -132,6 +132,7 @@ The site deploys to **Vercel** automatically on every push to `main`.
 
 - **Email:** [nakibhasan2711@gmail.com](mailto:nakibhasan2711@gmail.com)
 - **LinkedIn:** [linkedin.com/in/nakibulhasan2711](https://www.linkedin.com/in/nakibulhasan2711/)
+- **GitHub:** [github.com/naimhasan2711](https://github.com/naimhasan2711)
 - **Portfolio:** [portfolio-nakibul-dev.vercel.app](https://portfolio-nakibul-dev.vercel.app/)
 
 ---

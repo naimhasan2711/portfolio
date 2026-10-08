@@ -3,6 +3,7 @@ import { certifications, education } from '../../data/education'
 import { sections } from '../../data/site'
 import { Reveal, RevealItem } from '../common/Reveal'
 import { Section } from '../common/Section'
+import { TiltCard } from '../common/TiltCard'
 
 function ColumnTitle({ children }: { children: string }) {
   return (
@@ -21,14 +22,12 @@ export function Education() {
           <ColumnTitle>Education</ColumnTitle>
           <ul className="flex flex-col gap-5">
             {education.map((e, i) => (
-              <RevealItem
-                key={e.institution}
-                delay={0.06 * i}
-                className="relative flex flex-col gap-5 overflow-hidden rounded-3xl border border-line/[0.08] bg-line/[0.02] p-6 sm:flex-row sm:items-start sm:p-7"
-              >
+              <RevealItem key={e.institution} delay={0.06 * i}>
+                <TiltCard className="rounded-3xl" max={5}>
+                <div className="relative flex h-full flex-col gap-5 overflow-hidden rounded-3xl border border-line/[0.08] bg-line/[0.02] p-6 transition-colors duration-500 group-hover:border-accent/25 sm:flex-row sm:items-start sm:p-7">
                 <div aria-hidden="true" className="absolute -top-16 -right-16 size-48 rounded-full bg-accent/[0.07] blur-3xl" />
                 {e.logo ? (
-                  <span className="relative grid size-20 shrink-0 place-items-center rounded-2xl border border-line/10 bg-line/[0.03] p-2.5">
+                  <span className="tilt-pop relative grid size-20 shrink-0 place-items-center rounded-2xl border border-line/10 bg-line/[0.03] p-2.5 transition-transform duration-500 group-hover:scale-105">
                     <img
                       src={e.logo}
                       alt={`${e.institution} logo`}
@@ -58,6 +57,8 @@ export function Education() {
                     </p>
                   )}
                 </div>
+                </div>
+                </TiltCard>
               </RevealItem>
             ))}
           </ul>
@@ -68,13 +69,14 @@ export function Education() {
           <ul className="flex flex-col gap-5">
             {certifications.map((c, i) => (
               <RevealItem key={c.name} delay={0.08 * (i + 1)}>
+                <TiltCard className="rounded-3xl" max={5}>
                 <a
                   href={c.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex h-full items-start gap-4 rounded-3xl border border-line/[0.07] bg-line/[0.015] p-6 transition-colors duration-300 hover:border-accent/30 hover:bg-line/[0.03]"
                 >
-                  <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-line/10 bg-line/[0.03] text-cool">
+                  <span className="tilt-pop grid size-11 shrink-0 place-items-center rounded-xl border border-line/10 bg-line/[0.03] text-cool transition-colors duration-300 group-hover:text-accent">
                     <Award size={20} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -86,6 +88,7 @@ export function Education() {
                     </span>
                   </span>
                 </a>
+                </TiltCard>
               </RevealItem>
             ))}
           </ul>

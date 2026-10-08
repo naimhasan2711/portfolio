@@ -37,9 +37,8 @@ export const profile = {
 /** Social / contact links. Only add links that really exist. */
 export const socialLinks: SocialLink[] = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/nakibulhasan2711/', icon: 'linkedin' },
+  { label: 'GitHub', href: 'https://github.com/naimhasan2711', icon: 'github' },
   { label: 'Email', href: `mailto:${profile.email}`, icon: 'mail' },
-  // TODO: the CV has no GitHub link. Add one here if you want it shown:
-  // { label: 'GitHub', href: 'https://github.com/<username>', icon: 'github' },
 ]
 
 /** About section copy. */

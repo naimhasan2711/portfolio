@@ -9,6 +9,7 @@ import { ErrorBoundary } from '../common/ErrorBoundary'
 import { Icon } from '../common/Icon'
 import { MagneticButton } from '../common/MagneticButton'
 import { HeroBackdrop } from './HeroBackdrop'
+import { TypedName } from './TypedName'
 
 // three.js is code-split into its own chunk and loaded after first paint.
 const HeroScene = lazy(() => import('../three/HeroScene'))
@@ -77,8 +78,7 @@ export function Hero() {
           </motion.p>
 
           <motion.h1 variants={item} className="text-[clamp(2.6rem,9vw,5.6rem)] leading-[0.95] font-semibold tracking-[-0.035em]">
-            <span className="text-gradient block">{firstLine}</span>
-            <span className="text-accent-gradient block pb-2">{lastName}</span>
+            <TypedName lines={[firstLine, lastName]} lineClasses={['text-gradient', 'text-accent-gradient pb-2']} />
           </motion.h1>
 
           <motion.ul variants={item} aria-label="Specialties" className="mt-6 flex flex-wrap items-center gap-2">

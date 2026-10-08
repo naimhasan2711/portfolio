@@ -13,6 +13,7 @@ export function Navbar() {
   const active = useActiveSection(sectionIds)
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const [hovered, setHovered] = useState<string | null>(null)
   const toggleRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -85,18 +86,29 @@ export function Navbar() {
             <span className="hidden text-sm font-medium whitespace-nowrap text-fg sm:block md:hidden lg:block">{profile.name}</span>
           </a>
 
-          <ul className="hidden items-center gap-1 md:flex">
+          <ul className="hidden items-center gap-1 md:flex" onPointerLeave={() => setHovered(null)}>
             {navItems.map((item) => {
               const isActive = active === item.id
+              const isHovered = hovered === item.id
               return (
-                <li key={item.id}>
+                <li key={item.id} onPointerEnter={() => setHovered(item.id)}>
                   <a
                     href={`#${item.id}`}
                     aria-current={isActive ? 'true' : undefined}
-                    className={`relative block rounded-full px-3 py-2 text-sm lg:px-4 transition-colors duration-300 ${
-                      isActive ? 'text-fg' : 'text-fg-muted hover:text-fg'
+                    onFocus={() => setHovered(item.id)}
+                    onBlur={() => setHovered(null)}
+                    className={`group/nav relative block rounded-full px-3 py-2 text-sm transition-colors duration-300 lg:px-4 ${
+                      isActive ? 'text-fg' : 'text-fg-muted'
                     }`}
                   >
+                    {/* soft highlight that glides between items as the pointer moves */}
+                    {isHovered && (
+                      <motion.span
+                        layoutId="nav-hover"
+                        className="absolute inset-0 -z-20 rounded-full bg-accent/[0.08]"
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
                     {isActive && (
                       <motion.span
                         layoutId="nav-pill"
@@ -104,7 +116,25 @@ export function Navbar() {
                         transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                       />
                     )}
-                    {item.label}
+                    {/* text roll: the label slides up and a copper copy rolls in from below */}
+                    <span className="relative block overflow-hidden">
+                      <span className="block transition-transform duration-[450ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover/nav:-translate-y-full group-focus-visible/nav:-translate-y-full">
+                        {item.label}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-0 block translate-y-full text-accent-soft transition-transform duration-[450ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover/nav:translate-y-0 group-focus-visible/nav:translate-y-0"
+                      >
+                        {item.label}
+                      </span>
+                    </span>
+                    {/* copper dot under the item */}
+                    <span
+                      aria-hidden="true"
+                      className={`absolute bottom-0.5 left-1/2 size-1 -translate-x-1/2 rounded-full bg-accent transition-all duration-300 ${
+                        isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0 group-hover/nav:scale-100 group-hover/nav:opacity-60'
+                      }`}
+                    />
                   </a>
                 </li>
               )

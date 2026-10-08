@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { usePalette } from './palette'
 
@@ -339,7 +339,7 @@ function Keyboard() {
   const keys = useRef<THREE.InstancedMesh>(null)
   const plate = useRoundedSlab(0.17, 0.56, 0.018, 0.008, 0.003)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const m = keys.current
     if (!m) return
     const o = new THREE.Object3D()

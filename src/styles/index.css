@@ -173,6 +173,11 @@
 }
 
 /* ── Keyframes for CSS-only effects ────────────────────────── */
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.45; transform: scale(0.8); }
@@ -234,4 +239,10 @@
   .project-dialog[open]::backdrop {
     opacity: 0;
   }
+}
+
+/* Children of a TiltCard that float above the surface (parallax depth). */
+.tilt-pop {
+  transform: translateZ(30px);
+  transform-style: preserve-3d;
 }

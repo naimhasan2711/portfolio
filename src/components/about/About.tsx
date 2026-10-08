@@ -4,6 +4,7 @@ import { about, headlineStats, profile } from '../../data/profile'
 import { sections } from '../../data/site'
 import { Reveal, RevealItem } from '../common/Reveal'
 import { Section } from '../common/Section'
+import { TiltCard } from '../common/TiltCard'
 
 /** Renders the heading with its emphasised phrase in italic serif. */
 function EmphasisHeading() {
@@ -26,6 +27,7 @@ function Portrait() {
       {/* offset hairline frame */}
       <div aria-hidden="true" className="absolute inset-0 translate-x-3 translate-y-3 rounded-[28px] border border-accent/30" />
 
+      <TiltCard className="rounded-[28px]" max={8} lift={18}>
       <div className="relative overflow-hidden rounded-[28px] border border-line/10 bg-ink-850 shadow-[0_40px_80px_-40px_rgb(0_0_0/0.55)]">
         <div className="relative aspect-[4/5]">
           <div
@@ -65,6 +67,7 @@ function Portrait() {
           </figcaption>
         )}
       </div>
+      </TiltCard>
     </figure>
   )
 }

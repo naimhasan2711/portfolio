@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { heroCenterpiece } from '../../data/site'
 import type { SceneQuality } from '../../utils/device'
-import { sceneInput, sceneStage } from './input'
+import { revealState, sceneInput, sceneStage } from './input'
 import { useDisposable, usePalette } from './palette'
 import { Workspace } from './Workspace'
 import { Workstation } from './Workstation'
@@ -381,6 +381,12 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
   const footprint = useRef({ w: 3.4, h: 3.6, cx: 0, cy: 0, pivotX: 0, pivotZ: 0 })
   /** 0 → 1 entrance animation, started when the model first appears. */
   const intro = useRef(-1)
+  /** Reveal: the model is "built" from the floor up behind a rising clip plane + scan line. */
+  const reveal = useMemo(
+    () => ({ plane: new THREE.Plane(new THREE.Vector3(0, -1, 0), 0), local: new THREE.Plane(), minY: 0, maxY: 1, pending: false }),
+    [],
+  )
+
   const measured = useRef(false)
 
   /** Measures the model's footprint once its meshes exist (they may load after mount). */
@@ -413,9 +419,23 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
       const spanW = room ? Math.hypot(s.x, s.z) : s.x
       footprint.current = { w: spanW, h: s.y, cx: room ? 0 : ctr.x, cy: ctr.y, pivotX: room ? ctr.x : 0, pivotZ: room ? ctr.z : 0 }
       measured.current = true
+      reveal.minY = box.min.y
+      reveal.maxY = box.max.y
+      // clip every material against the reveal plane (set before compiling, so no hitch later)
+      gl.localClippingEnabled = true
+      d.traverse((o) => {
+        const m = o as THREE.Mesh
+        if (!m.isMesh || m.userData.noClip) return
+        const mats = Array.isArray(m.material) ? m.material : [m.material]
+        mats.forEach((mat) => {
+          mat.clippingPlanes = [reveal.plane]
+          mat.needsUpdate = true
+        })
+      })
       // compile every shader up front so the reveal never stalls on a blank frame
       gl.compile(three, camera)
-      intro.current = 0
+      // start the entrance on the *next* frame (compiling makes this frame long)
+      reveal.pending = true
       window.dispatchEvent(new Event('hero-model-ready'))
     }
   }
@@ -451,12 +471,21 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
     zoom.current += (sceneInput.zoom - zoom.current) * (1 - Math.pow(0.001, dt))
     target.current = computeTarget()
     const { x: baseX, y: baseY, s: fitScale } = target.current
-    // entrance: rise, grow and settle with a quarter-turn (eased)
-    if (intro.current >= 0 && intro.current < 1) intro.current = Math.min(1, intro.current + dt / 1.6)
-    const ip = intro.current < 0 ? 0 : 1 - Math.pow(1 - intro.current, 3)
-    const baseScale = fitScale * (0.82 + 0.18 * ip)
-    const introSpin = (1 - ip) * -0.9
-    const introDrop = (1 - ip) * -0.6
+    // entrance: built from the floor up while it grows and turns into place
+    if (reveal.pending) {
+      reveal.pending = false
+      intro.current = 0
+    } else if (intro.current >= 0 && intro.current < 1) {
+      intro.current = Math.min(1, intro.current + Math.min(dt, 1 / 30) / 2.4) // capped step: no jumps after a long frame
+    }
+    const raw = intro.current < 0 ? 0 : intro.current
+    const ip = 1 - Math.pow(1 - raw, 4) // ease-out quart
+    const baseScale = fitScale * (0.9 + 0.1 * ip)
+    const introSpin = (1 - ip) * -0.7
+    const introDrop = (1 - ip) * -0.25
+    // clip level: sweeps from below the floor to above the top (slightly ahead of the easing)
+    const sweep = Math.min(1, raw * 1.25)
+    const level = reveal.minY - 0.05 + (reveal.maxY - reveal.minY + 0.1) * (1 - Math.pow(1 - sweep, 2))
     if (g) {
       g.visible = intro.current >= 0 || heroCenterpiece !== 'workstation'
       // Turntable: rotation only around the vertical axis, driven by dragging.
@@ -472,6 +501,14 @@ function Rig({ children, shadows }: { children: ReactNode; shadows: boolean }) {
       g.position.x += (baseX - g.position.x) * k
       g.position.y += (baseY + introDrop + scroll * 1.6 - g.position.y) * k
       g.scale.setScalar(g.scale.x + (baseScale - g.scale.x) * k)
+    }
+    if (device.current && measured.current) {
+      device.current.updateWorldMatrix(true, false)
+      // plane in the model's own space (keeps y < level), then into world space
+      reveal.local.set(new THREE.Vector3(0, -1, 0), raw >= 1 ? 1e6 : level)
+      reveal.plane.copy(reveal.local).applyMatrix4(device.current.matrixWorld)
+      revealState.plane = reveal.plane
+      revealState.glow = raw > 0 && raw < 1 ? Math.sin(Math.PI * sweep) : 0
     }
     if (device.current) {
       // The room scenes stay perfectly still (no sway or bob) — they only turn when dragged.
