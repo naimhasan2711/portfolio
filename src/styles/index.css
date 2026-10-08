@@ -45,8 +45,9 @@
 
 /* ── Design tokens (Tailwind utilities read the palette above) ── */
 @theme inline {
-  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   --font-serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
 
   --color-ink-950: var(--bg);
@@ -109,6 +110,14 @@
 
   button {
     cursor: pointer;
+  }
+
+  /* Display face for headings (optical sizing tightens it at large sizes) */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
   }
 }
 

@@ -77,7 +77,7 @@ export function Hero() {
             <span className="max-[359px]:hidden">{profile.location}</span>
           </motion.p>
 
-          <motion.h1 variants={item} className="text-[clamp(2.6rem,9vw,5.6rem)] leading-[0.95] font-semibold tracking-[-0.035em]">
+          <motion.h1 variants={item} className="text-[clamp(2.6rem,9vw,5.6rem)] leading-[0.95] font-semibold tracking-[-0.02em]">
             <TypedName lines={[firstLine, lastName]} lineClasses={['text-gradient', 'text-accent-gradient pb-2']} />
           </motion.h1>
 

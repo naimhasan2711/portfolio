@@ -108,7 +108,7 @@ function drawCode(
   ctx.fillRect(14, 6, 230, 28)
   ctx.fillStyle = accent
   ctx.fillRect(14, 31, 230, 3)
-  ctx.font = '500 15px Consolas, "Geist Mono", Menlo, monospace'
+  ctx.font = '500 15px Consolas, "JetBrains Mono", Menlo, monospace'
   ctx.fillStyle = '#c9d1d9'
   ctx.fillText(file, 28, 25)
   ctx.fillStyle = '#121518'
@@ -130,7 +130,7 @@ function drawCode(
   }
   const first = Math.max(0, cursorLine - visible + 3)
 
-  ctx.font = '15px Consolas, "Geist Mono", Menlo, monospace'
+  ctx.font = '15px Consolas, "JetBrains Mono", Menlo, monospace'
   let typed = limit
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? ''
@@ -211,14 +211,14 @@ function drawTerminal(ctx: CanvasRenderingContext2D, w: number, h: number, accen
     ctx.arc(20 + i * 20, 17, 6, 0, Math.PI * 2)
     ctx.fill()
   })
-  ctx.font = '500 14px Consolas, "Geist Mono", Menlo, monospace'
+  ctx.font = '500 14px Consolas, "JetBrains Mono", Menlo, monospace'
   ctx.fillStyle = '#8b949e'
   ctx.fillText('zsh - portfolio-app', 90, 22)
   const lineH = 24
   const visible = Math.floor((h - 60) / lineH)
   const count = Math.min(TERMINAL_LINES.length, shown)
   const first = Math.max(0, count - visible + 1)
-  ctx.font = '16px Consolas, "Geist Mono", Menlo, monospace'
+  ctx.font = '16px Consolas, "JetBrains Mono", Menlo, monospace'
   for (let i = first; i < count; i++) {
     const [text, color] = TERMINAL_LINES[i] ?? ['', '#fff']
     const y = 62 + (i - first) * lineH

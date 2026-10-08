@@ -57,8 +57,8 @@ const art: Record<ProjectMotif, (grad: string) => JSX.Element> = {
         <circle r="62" fill="none" stroke="var(--line)" strokeOpacity="0.08" strokeWidth="10" />
         <circle r="62" fill="none" stroke={g} strokeWidth="10" strokeLinecap="round" strokeDasharray="260 400" transform="rotate(140)" />
         <circle r="44" fill="none" stroke="var(--line)" strokeOpacity="0.06" />
-        <text y="8" textAnchor="middle" fill="var(--line)" fillOpacity="0.85" fontFamily="Geist Mono, monospace" fontSize="20">0482</text>
-        <text y="26" textAnchor="middle" fill="var(--accent)" fillOpacity="0.8" fontFamily="Geist Mono, monospace" fontSize="8">kWh · synced</text>
+        <text y="8" textAnchor="middle" fill="var(--line)" fillOpacity="0.85" fontFamily="JetBrains Mono, monospace" fontSize="20">0482</text>
+        <text y="26" textAnchor="middle" fill="var(--accent)" fillOpacity="0.8" fontFamily="JetBrains Mono, monospace" fontSize="8">kWh · synced</text>
       </g>
       <g transform="translate(290 70)">
         <path d="M0 0c-14 0-24 10-24 23 0 17 24 41 24 41s24-24 24-41C24 10 14 0 0 0Z" fill="var(--accent)" fillOpacity="0.14" stroke="var(--accent)" strokeOpacity="0.7" />
@@ -136,7 +136,7 @@ const art: Record<ProjectMotif, (grad: string) => JSX.Element> = {
       <path d="M170 120 H380" stroke="var(--line)" strokeOpacity="0.06" />
       <g transform="translate(280 170)">
         <rect width="90" height="34" rx="8" fill="var(--line)" fillOpacity="0.05" stroke="var(--line)" strokeOpacity="0.08" />
-        <text x="12" y="22" fill="var(--line)" fillOpacity="0.7" fontFamily="Geist Mono, monospace" fontSize="11">IoT → app</text>
+        <text x="12" y="22" fill="var(--line)" fillOpacity="0.7" fontFamily="JetBrains Mono, monospace" fontSize="11">IoT → app</text>
       </g>
     </>
   ),
@@ -154,7 +154,7 @@ const art: Record<ProjectMotif, (grad: string) => JSX.Element> = {
           <path d="M130 8V72" stroke="var(--line)" strokeOpacity="0.2" strokeDasharray="3 4" />
           <rect x="18" y="22" width="70" height="8" rx="4" fill="var(--line)" fillOpacity="0.3" />
           <rect x="18" y="40" width="44" height="6" rx="3" fill="var(--line)" fillOpacity="0.14" />
-          <text x="142" y="46" fill="var(--line)" fillOpacity="0.75" fontFamily="Geist Mono, monospace" fontSize="13">%</text>
+          <text x="142" y="46" fill="var(--line)" fillOpacity="0.75" fontFamily="JetBrains Mono, monospace" fontSize="13">%</text>
         </g>
       ))}
       <g transform="translate(320 60)" stroke="var(--line)" strokeOpacity="0.25">

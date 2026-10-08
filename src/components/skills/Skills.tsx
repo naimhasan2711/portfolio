@@ -166,7 +166,7 @@ function Constellation({ skill, usage }: { skill: string; usage: SkillUsage[] })
         <circle cx="190" cy="90" r="9" fill="var(--bg-2)" stroke="var(--accent)" strokeWidth="1.5" />
         <circle cx="190" cy="90" r="3.5" fill="var(--accent)" />
       </g>
-      <g fontFamily="Geist Mono, monospace" fontSize="9" fill="var(--fg-subtle)">
+      <g fontFamily="JetBrains Mono, monospace" fontSize="9" fill="var(--fg-subtle)">
         <circle cx="16" cy="166" r="3" fill="var(--accent)" />
         <text x="24" y="169">project</text>
         <circle cx="76" cy="166" r="3" fill="var(--cool)" />
