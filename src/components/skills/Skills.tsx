@@ -6,6 +6,7 @@ import { skillGroups } from '../../data/skills'
 import { findSkillUsage, type SkillUsage } from '../../utils/skillUsage'
 import { Reveal } from '../common/Reveal'
 import { Section } from '../common/Section'
+import { TiltCard } from '../common/TiltCard'
 
 /** First group (Android) is full width; so is the last one if it would sit alone in its row. */
 const spansFull = (i: number) => i === 0 || (i === skillGroups.length - 1 && (skillGroups.length - 1) % 2 === 1)
@@ -38,9 +39,15 @@ export function Skills() {
             <Reveal
               key={g.id}
               delay={0.04 * gi}
-              className={`rounded-2xl border border-line/[0.07] bg-line/[0.015] p-5 ${spansFull(gi) ? 'sm:col-span-2' : ''}`}
+              className={spansFull(gi) ? 'sm:col-span-2' : ''}
             >
-              <div role="group" aria-labelledby={`skills-${g.id}`}>
+              {/* same 3D tilt + glare as the education cards (gentler on the wide card) */}
+              <TiltCard className="rounded-2xl" max={spansFull(gi) ? 3 : 5}>
+              <div
+                role="group"
+                aria-labelledby={`skills-${g.id}`}
+                className="h-full rounded-2xl border border-line/[0.07] bg-line/[0.015] p-5 transition-colors duration-500 group-hover:border-accent/25"
+              >
                 <h3 id={`skills-${g.id}`} className="text-sm font-semibold text-fg">
                   {g.title}
                 </h3>
@@ -67,6 +74,7 @@ export function Skills() {
                   })}
                 </ul>
               </div>
+              </TiltCard>
             </Reveal>
           ))}
         </div>

@@ -75,7 +75,7 @@ export const about = {
 /** Headline numbers — every one of these is stated in the CV. */
 export const headlineStats: Stat[] = [
   { value: '5+', label: 'Years of software engineering' },
-  { value: '5+', label: 'Native apps led at BJIT' },
+  { value: '8+', label: 'Native apps led at BJIT' },
   { value: '4', label: 'Commercial-grade app launches' },
   { value: '20+', label: 'Entry-level developers trained' },
 ]

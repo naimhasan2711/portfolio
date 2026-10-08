@@ -53,7 +53,7 @@ export const sections = {
   projects: {
     eyebrow: 'Selected work',
     title: 'Projects',
-    intro: 'Products I’ve architected and delivered. The artwork is abstract — no app screenshots are published here.',
+    intro: 'Products I’ve architected and delivered.',
   },
   skills: {
     eyebrow: 'Toolbox',

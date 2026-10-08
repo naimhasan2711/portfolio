@@ -17,13 +17,13 @@ export const experiences: Experience[] = [
     summary:
       'Leading native Android development with Kotlin and Jetpack Compose, setting architecture standards and mentoring developers across cross-functional teams in Bangladesh and Japan.',
     highlights: [
-      { value: '5+', label: 'Native apps led' },
+      { value: '8+', label: 'Native apps led' },
       { value: '40%', label: 'Faster startup & UI' },
       { value: '25%', label: 'Fewer bug reports' },
       { value: '10+', label: 'Juniors mentored' },
     ],
     responsibilities: [
-      'Spearheaded development of 5+ native Android apps using Kotlin and Jetpack Compose, increasing delivery speed by 30% through efficient architecture and tooling.',
+      'Spearheaded development of 8+ native Android apps using Kotlin and Jetpack Compose, increasing delivery speed by 30% through efficient architecture and tooling.',
       'Improved UI responsiveness and app startup time by 40% by optimizing Compose layouts and leveraging performance profiling tools.',
       'Designed and enforced MVVM and Clean Architecture across all projects, boosting maintainability and reducing bug reports by 25%.',
       'Integrated key services such as Firebase, Retrofit, Room and Google Maps, enabling seamless real-time features and location-based functionality.',
@@ -66,13 +66,13 @@ export const experiences: Experience[] = [
     summary:
       'Modernized a consumer voucher app — a refreshed Material Design UI, new features, and RESTful API integration.',
     highlights: [
-      { value: '10+', label: 'Features delivered' },
+      { value: '20+', label: 'Features delivered' },
       { value: '25%', label: 'Active user growth' },
       { value: '20%', label: 'Lower crash rate' },
     ],
     responsibilities: [
       'Revamped the app UI using XML and Material Design standards, improving user engagement.',
-      'Delivered 10+ new features aligned with business needs, directly contributing to a 25% increase in active user base.',
+      'Delivered 20+ new features aligned with business needs, directly contributing to a 25% increase in active user base.',
       'Integrated RESTful APIs to sync front-end features with backend services, reducing crash rates by 20%.',
       'Proactively self-learned Android best practices and consistently implemented them to modernize the legacy codebase.',
     ],
